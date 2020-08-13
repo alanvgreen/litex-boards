@@ -244,7 +244,7 @@ serial_pmods = [
 class Platform(LatticePlatform):
     def __init__(self, device="LIFCL", **kwargs):
         assert device in ["LIFCL"]
-        LatticePlatform.__init__(self, device + "-40-9BG400C", _io, _connectors, toolchain="radiant", **kwargs)
+        LatticePlatform.__init__(self, device + "-40-8BG400C", _io, _connectors, toolchain="radiant", **kwargs)
 
     def create_programmer(self):
         return OpenOCDJTAGProgrammer("openocd_versa_ecp5.cfg") #TODO Make cfg for Crosslink-NX-Eval
