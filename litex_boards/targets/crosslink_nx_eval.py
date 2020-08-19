@@ -134,8 +134,14 @@ def main():
     builder.build(**builder_kargs, run=args.build)
 
     if args.load:
-        prog = soc.platform.create_programmer()
-        prog.load_bitstream(os.path.join(builder.gateware_dir, soc.build_name + ".svf"))
+        use_radiant = True;
+        if use_radiant:
+            prog = soc.platform.create_radiant_programmer()
+            prog.load_bitstream(os.path.join(builder.gateware_dir, soc.build_name + ".bit"))
+        else:
+            # not yet supported -- openOCD
+            prog = soc.platform.create_programmer()
+            prog.load_bitstream(os.path.join(builder.gateware_dir, soc.build_name + ".svf"))
 
 if __name__ == "__main__":
     main()

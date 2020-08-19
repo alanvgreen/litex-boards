@@ -5,6 +5,7 @@
 from litex.build.generic_platform import *
 from litex.build.lattice import LatticePlatform
 from litex.build.lattice.programmer import OpenOCDJTAGProgrammer
+from litex.build.lattice.programmer import LatticeProgrammer
 
 # IOs ----------------------------------------------------------------------------------------------
 
@@ -249,5 +250,69 @@ class Platform(LatticePlatform):
     def create_programmer(self):
         return OpenOCDJTAGProgrammer("openocd_versa_ecp5.cfg") #TODO Make cfg for Crosslink-NX-Eval
 
+    def get_xcf_template(self):
+        return """
+<?xml version='1.0' encoding='utf-8' ?>
+<!DOCTYPE		ispXCF	SYSTEM	"IspXCF.dtd" >
+<ispXCF version="R1.2.0">
+	<Comment></Comment>
+	<Chain>
+		<Comm>JTAG</Comm>
+		<Device>
+			<SelectedProg value="TRUE"/>
+			<Pos>1</Pos>
+			<Vendor>Lattice</Vendor>
+			<Family>LIFCL</Family>
+			<Name>LIFCL-40</Name>
+			<IDCode>0x010f1043</IDCode>
+			<Package>All</Package>
+			<PON>LIFCL-40</PON>
+			<Bypass>
+				<InstrLen>8</InstrLen>
+				<InstrVal>11111111</InstrVal>
+				<BScanLen>1</BScanLen>
+				<BScanVal>0</BScanVal>
+			</Bypass>
+			<File>{bitstream_file}</File>
+			<FileTime>08/13/20 14:01:18</FileTime>
+			<JedecChecksum>N/A</JedecChecksum>
+			<MemoryType>Static Random Access Memory (SRAM)</MemoryType>
+			<Operation>Fast Configuration</Operation>
+			<Option>
+				<SVFVendor>JTAG STANDARD</SVFVendor>
+				<IOState>HighZ</IOState>
+				<PreloadLength>362</PreloadLength>
+				<IOVectorData>0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF</IOVectorData>
+				<OverideUES value="TRUE"/>
+				<TCKFrequency>1.000000 MHz</TCKFrequency>
+				<SVFProcessor>ispVM</SVFProcessor>
+				<Usercode>0x00000000</Usercode>
+				<AccessMode>Direct Programming</AccessMode>
+			</Option>
+		</Device>
+	</Chain>
+	<ProjectOptions>
+		<Program>SEQUENTIAL</Program>
+		<Process>ENTIRED CHAIN</Process>
+		<OperationOverride>No Override</OperationOverride>
+		<StartTAP>TLR</StartTAP>
+		<EndTAP>TLR</EndTAP>
+		<VerifyUsercode value="FALSE"/>
+		<TCKDelay>2</TCKDelay>
+	</ProjectOptions>
+	<CableOptions>
+		<CableName>USB2</CableName>
+		<PortAdd>FTUSB-0</PortAdd>
+		<USBID>LATTICE CROSSLINK-NX EVAL BOARD A Location 0000 Serial LATTICE CROSSLINK-NX EVAL BOARD A</USBID>
+		<JTAGPinSetting>
+			TRST	ABSENT;
+			ISPEN	ABSENT;
+		</JTAGPinSetting>
+	</CableOptions>
+</ispXCF>
+"""
 
+    def create_radiant_programmer(self):
+        xcf_template = self.get_xcf_template()
+        return LatticeProgrammer(xcf_template)
 
